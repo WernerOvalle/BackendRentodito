@@ -13,10 +13,10 @@ use \App\Http\Middleware\ApiAuthMiddleware;
 |
 */
 //Rutas pruebas
-/*
+
 Route::get('/', function () {
     return view('welcome');
-});
+});/*
 Route::get('/prueba/{nombre?}', function ($nombre = null) {
     $texto = "<h1> texto </h1>";
     $texto .= 'nombre: ' . $nombre;
