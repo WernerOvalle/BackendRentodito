@@ -65,13 +65,16 @@ class UserController extends Controller
                 $user->email = $params_array['email'];
                 $user->password = $pwd;
                 $user->role = 'ROLE_USER';
+                $user->image = $params_array['image'];
+                $user->ine2 = $params_array['ine2'];
+                $user->ine1 = $params_array['ine1'];
                 /*  var_dump($user);
                  die();*/
                 $user->save();
                 $data = array(
                     'status' => 'success',
                     'code' => 200,
-                    'message' => 'Usuario  creado',
+                    'message' => 'Usuario creado, ahora inicia sesión',
 
                 );
             }
@@ -186,7 +189,7 @@ class UserController extends Controller
         //devuelvo datos
         return response()->json($data, $data['code']);
     }
-    public function upload(Request $request)
+    public function upload1(Request $request)
     { //Recoger datos de la peticion
         $image = $request->file('file0');
 
@@ -219,6 +222,74 @@ class UserController extends Controller
         //   return response($data, $data['code'])->header('Content-Type', 'text/plain');
         return response()->json($data, $data['code']);
     }
+
+    public function upload2(Request $request)
+    { //Recoger datos de la peticion
+        $image = $request->file('file0');
+
+        //validacion de imagen
+
+        $validate = \Validator::make($request->all(), [
+            'file0' => 'required|image|mimes:jpg,jpeg,png,gif'
+        ]);
+
+        if (!$image || $validate->fails()) {
+            //devolver  el resultado
+            $data = array(
+                'code' => 400,
+                'status' => 'error',
+                'message' => 'error al subir imagen'
+            );
+        } else {
+            //guardar imagen
+            $image_name = time() . $image->getClientOriginalName();
+            \Storage::disk('users')->put($image_name, \File::get($image));
+
+            $data = array(
+                'code' => 200,
+                'status' => 'success',
+                'image' => $image_name
+            );
+        }
+
+
+        //   return response($data, $data['code'])->header('Content-Type', 'text/plain');
+        return response()->json($data, $data['code']);
+    }
+    public function upload3(Request $request)
+    { //Recoger datos de la peticion
+        $image = $request->file('file0');
+
+        //validacion de imagen
+
+        $validate = \Validator::make($request->all(), [
+            'file0' => 'required|image|mimes:jpg,jpeg,png,gif'
+        ]);
+
+        if (!$image || $validate->fails()) {
+            //devolver  el resultado
+            $data = array(
+                'code' => 400,
+                'status' => 'error',
+                'message' => 'error al subir imagen'
+            );
+        } else {
+            //guardar imagen
+            $image_name = time() . $image->getClientOriginalName();
+            \Storage::disk('users')->put($image_name, \File::get($image));
+
+            $data = array(
+                'code' => 200,
+                'status' => 'success',
+                'image' => $image_name
+            );
+        }
+
+
+        //   return response($data, $data['code'])->header('Content-Type', 'text/plain');
+        return response()->json($data, $data['code']);
+    }
+
     public function getImage($filename)
     { //comprobar si existe imagen
         $isset = \Storage::disk('users')->exists($filename);

@@ -47,8 +47,9 @@ Route::get('/Personas/pruebas', 'PersonasController@pruebas');
 Route::post('api/register', 'UserController@register');
 Route::post('api/login', 'UserController@login');
 Route::put('api/user/update', 'UserController@update');
-Route::post('api/user/upload', 'UserController@upload')->middleware(ApiAuthMiddleware::class);
-
+Route::post('api/user/upload1', 'UserController@upload1');//->middleware(ApiAuthMiddleware::class);
+Route::post('api/user/upload2', 'UserController@upload2');//->middleware(ApiAuthMiddleware::class);
+Route::post('api/user/upload3', 'UserController@upload3');//->middleware(ApiAuthMiddleware::class);
 Route::get('api/user/avatar/{filename}', 'UserController@getImage');
 Route::get('api/user/detail/{id}', 'UserController@detail');
 
