@@ -42,7 +42,8 @@ class UserController extends Controller
                 'name' => 'required|alpha',
                 'surname' => 'required|alpha',
                 'email' => 'required|email|unique:users', //no duplicidad
-                'password' => 'required'
+                'password' => 'required',
+                'telefono' => 'required|numeric',
             ]);
 
             if ($validate->fails()) {
@@ -66,6 +67,7 @@ class UserController extends Controller
                 $user->password = $pwd;
                 $user->role = 'ROLE_USER';
                 $user->image = $params_array['image'];
+                $user->telefono = $params_array['telefono'];
                 $user->ine2 = $params_array['ine2'];
                 $user->ine1 = $params_array['ine1'];
                 /*  var_dump($user);
@@ -154,6 +156,7 @@ class UserController extends Controller
 
                 'name' => 'required|alpha',
                 'surname' => 'required|alpha',
+                'telefono' => 'required|numeric',
                 'email' => 'required|email|unique:users' . $user->sub
             ]);
             //codificio la contraseña y la actulizo en el array

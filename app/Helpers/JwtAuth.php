@@ -36,6 +36,7 @@ class JwtAuth
                 'email' => $user->email,
                 'name' => $user->name,
                 'image' => $user->image,
+                'telefono' =>  $user->telefono,
                 'ine1' => $user->ine1,
                 'ine2' => $user->ine2,
                 'surname' => $user->surname,
