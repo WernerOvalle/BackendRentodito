@@ -79,7 +79,7 @@ class SeviciosController extends Controller
     }
     public function getServiciosPersona()
     {
-        $Sevicios = Sevicios::all()->load('user')->where('user.role', '=', 'PARTICULAR-SERV');;
+        $Sevicios = Sevicios::all()->load('user');
         return  response()->json([
             'code' => 200,
             'status' => 'success',
