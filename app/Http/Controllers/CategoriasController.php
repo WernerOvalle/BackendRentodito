@@ -74,7 +74,7 @@ class CategoriasController extends Controller
                 //crear
                 $Categorias = new Categorias();
                 $Categorias->name = $params_array['name'];
-
+                $Categorias->description = $params_array['description'];
                 $Categorias->save();
                 $data = array(
                     'status' => 'success',

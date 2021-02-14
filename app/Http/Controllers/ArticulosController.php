@@ -14,11 +14,11 @@ class ArticulosController extends Controller
 
     {
 
-        $this->middleware('api.auth', ['except' => ['index', 'show','getImage', 'getArticulosByCateogoria','getArticulosByUser']]);
+        $this->middleware('api.auth', ['except' => ['index', 'show','getImage', 'getArticulosByCateogoria','getArticulosByUser','getArticulosPersona']]);
     }
     public function index()
     {
-        $Articulos = Articulos::all()->load('categorias');
+        $Articulos = Articulos::all()->load('categorias')->load('tiendas')->load('user');
         return  response()->json([
             'code' => 200,
             'status' => 'success',
@@ -65,7 +65,7 @@ class ArticulosController extends Controller
             $validate = \Validator::make($params_array, [
                 'title' => 'required',
                 'content' => 'required',
-                'categorias_id' => 'required',
+                'categoria_id' => 'required',
                 'image' => 'required',
                 'tienda_id' => 'required'
             ]);
@@ -83,7 +83,7 @@ class ArticulosController extends Controller
                 //crear
                 $Articulos = new Articulos();
                 $Articulos->user_id = $user->sub;
-                $Articulos->categorias_id = $params->categorias_id;
+                $Articulos->categoria_id = $params->categoria_id;
                 $Articulos->tienda_id = $params->tienda_id;
                 $Articulos->title = $params->title;
                 $Articulos->content = $params->content;
@@ -126,7 +126,7 @@ class ArticulosController extends Controller
             $validate = \Validator::make($params_array, [
                 'title' => 'required',
                 'content' => 'required',
-                'categorias_id' => 'required',
+                'categoria_id' => 'required',
                 'image' => 'required',
                 'tienda_id' => 'required'
             ]);
@@ -262,7 +262,7 @@ class ArticulosController extends Controller
 
     public function getArticulosByCateogoria($id)
     {
-        $Articulos = Articulos::where('categorias_id',$id)->get();
+        $Articulos = Articulos::where('categoria_id',$id)->get()->load('user', 'tiendas')->where('user.role', '=', 'TENDERO');
 
         return  response()->json([
             'status' => 'success',
@@ -270,7 +270,15 @@ class ArticulosController extends Controller
 
         ], 200);
     }
-
+    public function getArticulosPersona()
+    {
+        $Articulos = Articulos::all()->load('categorias')->load('tiendas')->load('user')->where('user.role', '=', 'PARTICULAR-PROD');;
+        return  response()->json([
+            'code' => 200,
+            'status' => 'success',
+            'Articulos' => $Articulos
+        ]);
+    }
     public function getArticulosByUser($id)
     {
         $Articulos = Articulos::where('user_id',$id)->get();

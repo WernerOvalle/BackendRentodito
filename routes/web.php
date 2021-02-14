@@ -52,15 +52,26 @@ Route::post('api/user/upload2', 'UserController@upload2');//->middleware(ApiAuth
 Route::post('api/user/upload3', 'UserController@upload3');//->middleware(ApiAuthMiddleware::class);
 Route::get('api/user/avatar/{filename}', 'UserController@getImage');
 Route::get('api/user/detail/{id}', 'UserController@detail');
-
-
-
+Route::get('api/user/detail', 'UserController@index')->middleware(ApiAuthMiddleware::class);
 /*Categorias*/
 Route::resource('api/category', 'CategoriasController');
 
+/*Tiendas*/
+Route::resource('api/tiendas', 'TiendasController');
+Route::post('api/tiendas/upload', 'TiendasController@upload');//->middleware(ApiAuthMiddleware::class);
 /*Articulos*/
 Route::resource('api/articulos', 'ArticulosController');
 Route::post('api/articulos/upload', 'ArticulosController@upload');
 Route::get('api/articulos/image/{filename}', 'ArticulosController@getImage');
 Route::get('api/articulos/categoria/{id}', 'ArticulosController@getArticulosByCateogoria');
+Route::get('api/articulos/persona/{nombre}', 'ArticulosController@getArticulosPersona');
+
+
+
 Route::get('api/articulos/user/{id}', 'ArticulosController@getArticulosByUser');
+
+
+/*servicios*/
+Route::resource('api/servicios', 'SeviciosController');
+Route::post('api/servicios/upload', 'SeviciosController@upload');//->middleware(ApiAuthMiddleware::class);}
+Route::get('api/servicios/role/{nombre}', 'SeviciosController@getServiciosPersona');

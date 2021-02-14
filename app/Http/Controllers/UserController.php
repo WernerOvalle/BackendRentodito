@@ -65,7 +65,7 @@ class UserController extends Controller
                 $user->surname = $params_array['surname'];
                 $user->email = $params_array['email'];
                 $user->password = $pwd;
-                $user->role = 'ROLE_USER';
+                $user->role = 'CLIENTE';
                 $user->image = $params_array['image'];
                 $user->telefono = $params_array['telefono'];
                 $user->ine2 = $params_array['ine2'];
@@ -328,5 +328,14 @@ class UserController extends Controller
             );
         }
         return response()->json($data, $data['code']);
+    }
+    public function index()
+    {
+        $user = User::all();
+        return  response()->json([
+            'code' => 200,
+            'status' => 'success',
+            'user' => $user
+        ]);
     }
 }
