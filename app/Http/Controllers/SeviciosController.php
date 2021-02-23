@@ -124,7 +124,7 @@ class SeviciosController extends Controller
 
     public function getServicioName($name)
     {
-        $Servicios = Sevicios::Where('title', 'like', '%' . $name . '%')->get();
+        $Servicios = Sevicios::Where('title', 'like', '%' . $name . '%')->get()->load('user');
 
         return  response()->json([
             'status' => 'success',
