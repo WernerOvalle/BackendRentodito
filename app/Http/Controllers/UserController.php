@@ -168,11 +168,70 @@ class UserController extends Controller
             //quito los valores que no deseo actualizar
             unset($params_array['id']);
             unset($params_array['role']);
-
-            unset($params_array['created_At']);
+            date_default_timezone_set('America/Mexico_City');
+            $params_array['updated_at']= date("Y-m-d H:i:s");
+            unset($params_array['created_at']);
             unset($params_array['remeber_token']);
             //Actualizo
             $usert_update = User::where('id', $user->sub)->update($params_array);
+            //mensaje de exito
+            $data = array(
+                'code' => 200,
+                'status' => 'success',
+                'message' =>'datos actualizados',
+                'user' => $user,
+                'changes' => $params_array
+            );
+        } else {
+            //mensaje de error
+            $data = array(
+                'code' => 400,
+                'status' => 'error',
+                'message' => 'El usuario no esta identificado'
+            );
+        }
+        //devuelvo datos
+        return response()->json($data, $data['code']);
+    }
+
+    public function update2(Request $request, $id)
+    { //obtengo token en cabecer
+        $token = $request->header('Authorization');
+        $jwtAuth = new \JwtAuth();
+        //verifica token
+        $checkToken = $jwtAuth->checkToken($token);
+
+        //obtengo json de peticion put
+        $json = $request->input('json', null);
+        $params = json_decode($json);
+        $params_array = json_decode($json, true);
+
+        //si el token es valido y hay parametros
+        if ($checkToken && !empty($params_array)) {
+            //obtengo  datos de usuario
+            $user = $jwtAuth->checkToken($token, true);
+
+            //valido email y nombres
+            $validate = \Validator::make($params_array, [
+
+                'name' => 'required|alpha',
+                'surname' => 'required|alpha',
+                'telefono' => 'required|numeric',
+                'email' => 'required|email|unique:users' . $user->sub
+            ]);
+            //codificio la contraseña y la actulizo en el array
+
+            /*  var_dump( $params_array['password']);
+            die();*/
+
+            //quito los valores que no deseo actualizar
+            unset($params_array['id']);
+            unset($params_array['created_at']);
+            unset($params_array['remeber_token']);
+            date_default_timezone_set('America/Mexico_City');
+            $params_array['updated_at']= date("Y-m-d H:i:s");
+            //Actualizo
+            $usert_update = User::where('id', $id)->update($params_array);
             //mensaje de exito
             $data = array(
                 'code' => 200,
@@ -331,11 +390,43 @@ class UserController extends Controller
     }
     public function index()
     {
-        $user = User::all();
+        $user = User::all()->load('tiendas');
         return  response()->json([
             'code' => 200,
             'status' => 'success',
             'user' => $user
         ]);
     }
+
+    public function destroy($id, Request $request)
+    {
+  /* en caso de querer borrar unicamente los arituclos de los usuarios logeados
+         //conserguir usuario identificado*/
+
+        $User = User::find($id);
+
+
+        if (!empty($User)) {
+            //borrarlo
+            $User->delete();
+
+            //devolver
+
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
+                'message' => 'Datos eliminados',
+
+            );
+        }else{
+            $data = array(
+                'status' => 'error',
+                'code' => 400,
+                'message' => 'Tienda no existe',
+
+            );
+        }
+        return response()->json($data, $data['code']);
+    }
+
 }

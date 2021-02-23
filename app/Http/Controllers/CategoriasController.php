@@ -120,7 +120,8 @@ class CategoriasController extends Controller
                 //quitar lo que no quiero actualizar
                 unset($params_array['id']);
                 unset($params_array['created_at']);
-
+                date_default_timezone_set('America/Mexico_City');
+                $params_array['updated_at']= date("Y-m-d H:i:s");
                 //actualizar
                 $Categorias = Categorias::where('id',$id)->update($params_array);
 
@@ -141,6 +142,43 @@ class CategoriasController extends Controller
             );
         }
         //mostrar
+        return response()->json($data, $data['code']);
+    }
+
+    public function destroy($id, Request $request)
+    {
+  /* en caso de querer borrar unicamente los arituclos de los usuarios logeados
+         //conserguir usuario identificado
+
+
+         $jwtAuth = new \JwtAuth();
+         $token = $request->header('Authorization', null);
+         $user = $jwtAuth->checkToken($token, true);
+
+         $Articulos = Articulos::where('id',$id)->where('user_id', $user->sub)->first() ; */
+        $Categorias = Categorias::find($id);
+
+
+        if (!empty($Categorias)) {
+            //borrarlo
+            $Categorias->delete();
+
+            //devolver
+
+            $data = array(
+                'status' => 'success',
+                'code' => 200,
+                'message' => 'Datos eliminados',
+
+            );
+        }else{
+            $data = array(
+                'status' => 'error',
+                'code' => 400,
+                'message' => 'Categoria no existe',
+
+            );
+        }
         return response()->json($data, $data['code']);
     }
 }

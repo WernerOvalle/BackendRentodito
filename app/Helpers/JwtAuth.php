@@ -38,6 +38,7 @@ class JwtAuth
                 'image' => $user->image,
                 'telefono' =>  $user->telefono,
                 'role' =>  $user->role,
+                'tienda_id' =>  $user->tienda_id,
                 'ine1' => $user->ine1,
                 'ine2' => $user->ine2,
                 'surname' => $user->surname,

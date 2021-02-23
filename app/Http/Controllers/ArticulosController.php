@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use App\Articulos;
 use App\Helpers\JwtAuth;
 
@@ -14,7 +15,7 @@ class ArticulosController extends Controller
 
     {
 
-        $this->middleware('api.auth', ['except' => ['index', 'show','getImage', 'getArticulosByCateogoria','getArticulosByUser','getArticulosPersona']]);
+        $this->middleware('api.auth', ['except' => ['index', 'show','getImage', 'getArticulosByCateogoria','getArticulosByUser','getArticulosPersona','getArticulosName','getArticulosByTienda']]);
     }
     public function index()
     {
@@ -28,7 +29,7 @@ class ArticulosController extends Controller
 
     public function show($id)
     {
-        $Articulos = Articulos::find($id)->load('categorias', 'user', 'tiendas');
+        $Articulos = Articulos::find($id)->load('categorias', 'user2', 'tiendas');
         if (is_object($Articulos)) {
             $data = [
                 'code' => 200,
@@ -67,7 +68,7 @@ class ArticulosController extends Controller
                 'content' => 'required',
                 'categoria_id' => 'required',
                 'image' => 'required',
-                'tienda_id' => 'required'
+
             ]);
 
             if ($validate->fails()) {
@@ -144,6 +145,11 @@ class ArticulosController extends Controller
                 unset($params_array['user']);
                 unset($params_array['user_id']);
                 unset($params_array['created_at']);
+                if($params_array['fecha_apartado']   == null) {
+                    $params_array['fecha_apartado']=null;
+                }
+                date_default_timezone_set('America/Mexico_City');
+                $params_array['updated_at']= date("Y-m-d H:i:s");
                 unset($params_array['id']);
 
 
@@ -260,9 +266,19 @@ class ArticulosController extends Controller
     }
 
 
+    public function getArticulosByTienda($id)
+    {
+        $Articulos = Articulos::where('tienda_id',$id)->get()->load('user', 'tiendas');
+
+        return  response()->json([
+            'status' => 'success',
+            'articulos' =>   $Articulos
+
+        ], 200);
+    }
     public function getArticulosByCateogoria($id)
     {
-        $Articulos = Articulos::where('categoria_id',$id)->get()->load('user', 'tiendas')->where('user.role', '=', 'TENDERO');
+        $Articulos = Articulos::where('categoria_id',$id)->get()->load('user', 'tiendas');
 
         return  response()->json([
             'status' => 'success',
@@ -272,7 +288,26 @@ class ArticulosController extends Controller
     }
     public function getArticulosPersona()
     {
-        $Articulos = Articulos::all()->load('categorias')->load('tiendas')->load('user')->where('user.role', '=', 'PARTICULAR-PROD');;
+
+      /*  $Articulos = DB::table('Articulos')->join('tiendas', 'tiendas.id', '=', 'Articulos.tienda_id')
+        ->join('users', function ($join) {
+            $join->on('Articulos.user_id', '=', 'users.id')
+                 ->where('users.role', '=', 'PARTICULAR-PROD');
+        })
+        ->get();*/
+
+       // all()->with('user')->where('user.role', 'PARTICULAR-PROD')->load('categorias')->load('tiendas')->toArray();
+       $Articulos = Articulos::with(array('user' => function($query)
+{
+     $query->where('users.role', '=', 'PARTICULAR-PROD');
+
+}))
+
+    ->get();
+
+    $Articulos->load('categorias')->load('tiendas');
+
+
         return  response()->json([
             'code' => 200,
             'status' => 'success',
@@ -286,6 +321,18 @@ class ArticulosController extends Controller
         return  response()->json([
             'status' => 'success',
             'articulos' =>   $Articulos
+
+        ], 200);
+    }
+
+
+    public function getArticulosName($name)
+    {
+        $Articulos = Articulos::Where('title', 'like', '%' . $name . '%')->get()->load('tiendas')->load('user');
+
+        return  response()->json([
+            'status' => 'success',
+            'Articulos' =>   $Articulos
 
         ], 200);
     }
