@@ -128,8 +128,7 @@ class ArticulosController extends Controller
                 'title' => 'required',
                 'content' => 'required',
                 'categoria_id' => 'required',
-                'image' => 'required',
-                'tienda_id' => 'required'
+                'image' => 'required'
             ]);
 
             if ($validate->fails()) {
