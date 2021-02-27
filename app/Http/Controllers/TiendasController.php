@@ -60,7 +60,7 @@ class TiendasController extends Controller
     }
     public function getEstados()
     {
-        $Tiendas = DB::table('Tiendas')->distinct()->select('estado')->get();
+        $Tiendas = DB::table('Tiendas')->distinct()->select('estado')->orderBy('estado')->get();
 
         return  response()->json([
             'code' => 200,

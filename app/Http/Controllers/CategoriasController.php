@@ -21,7 +21,7 @@ class CategoriasController extends Controller
     }
     public function index()
     {
-        $categories = Categorias::all();
+        $categories = Categorias::orderBy('name')->get();
         return  response()->json([
             'code' => 200,
             'status' => 'success',
